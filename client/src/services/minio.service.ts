@@ -20,4 +20,43 @@ export class MinioService {
 
     return await response.json();
   }
+
+  static async uploadToBucker(
+    file: File,
+    url: string,
+    onProgress: (event: number) => void
+  ) {
+    const xhr = new XMLHttpRequest();
+
+    // Progress event
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable) {
+        const progress = Math.round((event.loaded / event.total) * 100);
+        onProgress(progress);
+      }
+    });
+
+    // Load event (upload complete)
+    xhr.addEventListener("load", () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress(100);
+      } else {
+        console.error(`Upload failed for ${file.name}:`, xhr.statusText);
+      }
+    });
+
+    // Error event
+    xhr.addEventListener("error", () => {
+      console.error(`Upload error for ${file.name}:`, xhr.statusText);
+    });
+
+    // Abort event
+    xhr.addEventListener("abort", () => {
+      console.log(`Upload aborted for ${file.name}`);
+    });
+
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.send(file);
+  }
 }
