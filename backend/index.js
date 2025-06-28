@@ -9,9 +9,11 @@ const app = Fastify({
   logger: true,
 });
 
-// Services
-// new MinioService();
-// Services
+// Disable CORS completely
+app.addHook("onRequest", async (request, reply) => {
+  // Remove any CORS headers that might be set
+  reply.header("Access-Control-Allow-Origin", "*");
+});
 
 // Routes
 app.get("/", async function handler(request, reply) {
@@ -23,6 +25,8 @@ await minioRoutes(app);
 
 try {
   await app.listen({ port: 5000 });
+
+  console.log("Server is running on port 5000");
 } catch (err) {
   app.log.error(err);
 

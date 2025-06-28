@@ -12,10 +12,10 @@ export async function minioRoutes(app) {
 
     const { bucket, key } = request.query;
 
-    const presignedUrl = await minioClient.presignedGetObject(bucket, key);
+    const presignedUrl = await minioClient.presignedPutObject(bucket, key, 60);
 
-    console.log(presignedUrl);
-
-    return reply.status(200).send(presignedUrl);
+    return reply.status(200).send({
+      url: presignedUrl,
+    });
   });
 }
