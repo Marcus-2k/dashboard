@@ -1,63 +1,30 @@
-import { useRef, useState } from "react";
-import { Button, ProgressCard } from "./components";
-import { MinioService } from "./services/minio.service";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Home, UpsertProduct } from "./pages";
+import { DashboardTab, OverviewTab, StatsTab } from "./pages/HomeTabs";
 
 function App() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files) {
-      for (const file of files) {
-        eventProcessFile(file);
-      }
-    }
-  };
-
-  async function eventProcessFile(file: File) {
-    MinioService.getPresignedUrl("storage", file.name).then((data) => {
-      uploadFile(file, data.url);
-    });
-  }
-
-  async function uploadFile(file: File, url: string) {
-    MinioService.uploadToBucker(file, url, (event) => {
-      setUploadProgress((prev) => ({ ...prev, [file.name]: event }));
-    });
-  }
-
   return (
-    <>
-      <Button
-        label="Upload File"
-        onClick={() => fileInputRef.current?.click()}
-      />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/home" element={<Home />}>
+          <Route path="dashboard" index element={<DashboardTab />} />
+          <Route path="overview" element={<OverviewTab />} />
+          <Route path="stats" element={<StatsTab />} />
+          <Route index element={<Navigate to="/home/dashboard" replace />} />
+        </Route>
 
-      <input
-        type="file"
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        multiple={true}
-      />
+        <Route
+          path="/products"
+          element={<div>Products List - Coming Soon</div>}
+        />
 
-      {Object.keys(uploadProgress).length > 0 && (
-        <div className="mt-4 space-y-2">
-          {Object.entries(uploadProgress).map(([fileName, progress]) => (
-            <ProgressCard
-              key={fileName}
-              fileName={fileName}
-              progress={progress}
-            />
-          ))}
-        </div>
-      )}
-    </>
+        <Route path="/products/new" element={<UpsertProduct />} />
+
+        <Route path="/products/update/:id" element={<UpsertProduct />} />
+
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
