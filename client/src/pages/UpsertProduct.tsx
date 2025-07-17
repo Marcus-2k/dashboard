@@ -46,10 +46,10 @@ export function UpsertProduct() {
   }>({});
 
   useEffect(() => {
-    // console.log("init effect");
+    console.log("init effect");
 
     return () => {
-      // console.log("destroy component");
+      console.log("destroy component");
     };
   });
 
@@ -155,29 +155,30 @@ export function UpsertProduct() {
 
     MinioService.uploadToBucket(file, url, (event) => {
       setUploadProgress((prev) => {
-        const newProgress = { ...prev };
+        const updated = { ...prev };
 
-        newProgress[id].progress = event;
-        newProgress[id].status =
+        updated[id].progress = event;
+        updated[id].status =
           event === 100 ? UploadStatusEnum.SUCCESS : UploadStatusEnum.PROGRESS;
 
         if (event === 100) {
           setFormData((prev) => {
             const newImages = prev.images.filter(
-              (image) => image !== newProgress[id].url
+              (image) => image !== updated[id].url
             );
-            newImages.push(newProgress[id].url);
+            newImages.push(updated[id].url);
             return { ...prev, images: newImages };
           });
         }
 
-        return newProgress;
+        return updated;
       });
     });
   }
 
-  function removeImage(fileName: string): void {
+  function removeImage(fileName: string, url: string): void {
     console.log("removeImage");
+    console.log("file name", fileName);
 
     setUploadProgress((prev) => {
       const newProgress = { ...prev };
@@ -185,6 +186,11 @@ export function UpsertProduct() {
       delete newProgress[fileName];
 
       return newProgress;
+    });
+
+    setFormData((prev) => {
+      const newImages = prev.images.filter((image) => image !== url);
+      return { ...prev, images: newImages };
     });
   }
 
@@ -247,7 +253,7 @@ export function UpsertProduct() {
                       <IconButton
                         style={{ position: "absolute", top: 0, right: 0 }}
                         aria-label="delete"
-                        onClick={() => removeImage(key)}
+                        onClick={() => removeImage(key, progress.url)}
                       >
                         <DeleteIcon />
                       </IconButton>
