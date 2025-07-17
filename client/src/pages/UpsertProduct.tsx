@@ -1,85 +1,334 @@
+import CancelIcon from "@mui/icons-material/Cancel";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import SaveIcon from "@mui/icons-material/Save";
+import { Button, IconButton } from "@mui/material";
+import { S3_BUCKET_NAME } from "@shared/constants";
+import { UploadStatusEnum } from "@shared/enums";
+import { MinioService } from "@shared/services";
+import { Input, ProgressCard } from "@shared/ui";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button, ProgressCard } from "../components";
-import { MinioService } from "../services/minio.service";
+import { Link, useParams } from "react-router-dom";
+
+interface Product {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  images: string[];
+}
 
 export function UpsertProduct() {
-  const params = useParams();
+  console.log("init component");
 
+  const params = useParams();
   const isUpdate = !!params.id;
 
-  useEffect(() => {
-    if (isUpdate) {
-      console.log("update");
-    }
-
-    return () => {
-      console.log("cleanup");
-    };
-  }, [isUpdate]);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<Product>({
+    name: "warhammer",
+    description: "",
+    price: 0,
+    category: "",
+    images: [],
+  });
   const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
+    [key: string]: {
+      status: UploadStatusEnum;
+      file: File;
+      progress: number;
+      url: string;
+      s3Url: string;
+    };
   }>({});
 
+  useEffect(() => {
+    // console.log("init effect");
+
+    return () => {
+      // console.log("destroy component");
+    };
+  });
+
+  function initForm() {
+    if (isUpdate && params.id) {
+      console.log("Loading product with ID:", params.id);
+    }
+  }
+
+  const handleInputChange = (field: keyof Product, value: string | number) => {
+    console.log("handleInputChange");
+
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("handleSubmit");
+
+    // e.preventDefault();
+    // setIsLoading(true);
+
+    // try {
+    //   const productData = {
+    //     ...formData,
+    //     images: uploadedImages,
+    //   };
+
+    //   if (isUpdate) {
+    //     // TODO: Implement ProductService.updateProduct(params.id, productData)
+    //     console.log("Updating product:", productData);
+    //   } else {
+    //     // TODO: Implement ProductService.createProduct(productData)
+    //     console.log("Creating product:", productData);
+    //   }
+
+    //   // Simulate API call
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    //   // Redirect to products list
+    //   window.location.href = "/products";
+    // } catch (error) {
+    //   console.error("Error saving product:", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleFileChange");
+
     const files = e.target.files;
 
     if (files) {
-      for (const file of files) {
-        eventProcessFile(file);
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        console.log("push file");
+        await eventProcessFile(file);
+      }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
     }
   };
 
-  async function eventProcessFile(file: File) {
-    MinioService.getPresignedUrl("storage", file.name).then((data) => {
-      uploadFile(file, data.url);
+  async function eventProcessFile(file: File): Promise<void> {
+    console.log("eventProcessFile");
+
+    try {
+      const data = await MinioService.getPresignedUrl(
+        S3_BUCKET_NAME,
+        file.name
+      );
+
+      setUploadProgress((prev) => {
+        return {
+          ...prev,
+          [data.id]: {
+            status: UploadStatusEnum.PENDING,
+            file: file,
+            progress: 0,
+            url: data.previewUrl,
+            s3Url: data.presignedUrl,
+          },
+        };
+      });
+
+      uploadFile(file, data.presignedUrl, data.id);
+    } catch (error) {
+      console.error("Error processing file:", error);
+    }
+  }
+
+  async function uploadFile(
+    file: File,
+    url: string,
+    id: string
+  ): Promise<void> {
+    console.log("uploadFile");
+
+    MinioService.uploadToBucket(file, url, (event) => {
+      setUploadProgress((prev) => {
+        const newProgress = { ...prev };
+
+        newProgress[id].progress = event;
+        newProgress[id].status =
+          event === 100 ? UploadStatusEnum.SUCCESS : UploadStatusEnum.PROGRESS;
+
+        if (event === 100) {
+          setFormData((prev) => {
+            const newImages = prev.images.filter(
+              (image) => image !== newProgress[id].url
+            );
+            newImages.push(newProgress[id].url);
+            return { ...prev, images: newImages };
+          });
+        }
+
+        return newProgress;
+      });
     });
   }
 
-  async function uploadFile(file: File, url: string) {
-    MinioService.uploadToBucker(file, url, (event) => {
-      setUploadProgress((prev) => ({ ...prev, [file.name]: event }));
+  function removeImage(fileName: string): void {
+    console.log("removeImage");
+
+    setUploadProgress((prev) => {
+      const newProgress = { ...prev };
+
+      delete newProgress[fileName];
+
+      return newProgress;
     });
   }
 
   return (
     <>
       <div className="p-10 container mx-auto">
-        <h1 className="text-2xl font-bold">
-          {isUpdate ? "Update Product" : "Create Product"}
+        <h1 className="text-2xl font-bold flex gap-2 items-center">
+          <Link to="/products" className="text-blue-500">
+            BACK
+          </Link>
+          <span>-</span>
+          <span>{isUpdate ? "Update Product" : "Create Product"}</span>
         </h1>
       </div>
 
-      <div className="p-10 container mx-auto">
-        <Button
-          label="Upload File"
-          onClick={() => fileInputRef.current?.click()}
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="p-10 container mx-auto max-w-2xl"
+      >
+        {/* Product Images */}
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-xl font-semibold mb-4">Product Images</h2>
 
-        <input
-          type="file"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"
-          multiple={true}
-        />
+          <div>
+            <Button
+              variant="outlined"
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <FileUploadIcon />
+              Upload Images
+            </Button>
 
-        {Object.keys(uploadProgress).length > 0 && (
-          <div className="mt-4 space-y-2">
-            {Object.entries(uploadProgress).map(([fileName, progress]) => (
-              <ProgressCard
-                key={fileName}
-                fileName={fileName}
-                progress={progress}
-              />
-            ))}
+            <input
+              type="file"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              multiple={true}
+            />
           </div>
-        )}
-      </div>
+
+          {/* Upload Progress */}
+          {Object.keys(uploadProgress).length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {Object.entries(uploadProgress).map(([key, progress]) => (
+                <div
+                  key={key}
+                  className="w-[calc(50%-4px)] h-[120px] rounded relative"
+                >
+                  {progress.progress === 100 ? (
+                    <>
+                      <img
+                        src={progress.url}
+                        alt={progress.file.name}
+                        className="object-cover size-full"
+                      />
+
+                      <IconButton
+                        style={{ position: "absolute", top: 0, right: 0 }}
+                        aria-label="delete"
+                        onClick={() => removeImage(key)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <ProgressCard progress={progress.progress} />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Basic Information */}
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+
+          <div>
+            <div className="mt-4">
+              <Input
+                label="Product Name"
+                placeholder="Enter product name..."
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+            </div>
+
+            <div className="mt-4">
+              <Input
+                label="Description"
+                placeholder="Enter product description..."
+                value={formData.description}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
+                multiline={true}
+              />
+            </div>
+
+            <div className="mt-4">
+              <Input
+                label="Price"
+                placeholder="0.00"
+                type="number"
+                min={0.0}
+                value={formData.price}
+                onChange={(e) =>
+                  handleInputChange("price", parseFloat(e.target.value) || 0)
+                }
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex gap-4">
+          <Button variant="contained" type="submit" color="success">
+            <SaveIcon />
+            {isLoading
+              ? "Saving..."
+              : isUpdate
+              ? "Update Product"
+              : "Create Product"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={() => console.log(formData)}
+          >
+            Show Form State
+          </Button>
+
+          <Link to="/products">
+            <Button variant="outlined" color="error">
+              Cancel
+              <CancelIcon />
+            </Button>
+          </Link>
+        </div>
+      </form>
     </>
   );
 }

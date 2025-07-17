@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Home, UpsertProduct } from "./pages";
 import { DashboardTab, OverviewTab, StatsTab } from "./pages/HomeTabs";
 
-function App() {
+export function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -27,5 +27,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

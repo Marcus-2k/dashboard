@@ -18,7 +18,7 @@ export function DashboardTab() {
             to="/products/new"
             className="block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded transition-colors"
           >
-            Upload Files
+            Create Product
           </Link>
         </div>
       </div>

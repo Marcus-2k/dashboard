@@ -1,4 +1,5 @@
 import { Client } from "minio";
+import { v4 } from "uuid";
 
 export async function minioRoutes(app) {
   app.get("/minio/get-presigned-url", async function handler(request, reply) {
@@ -12,10 +13,21 @@ export async function minioRoutes(app) {
 
     const { bucket, key } = request.query;
 
-    const presignedUrl = await minioClient.presignedPutObject(bucket, key, 60);
+    const fileExtension = key.split(".").pop();
+
+    const id = v4();
+    const newFileName = `${id}.${fileExtension}`;
+
+    const presignedUrl = await minioClient.presignedPutObject(
+      bucket,
+      newFileName,
+      300 // 5 minutes instead of 60 seconds
+    );
 
     return reply.status(200).send({
-      url: presignedUrl,
+      id: id,
+      presignedUrl: presignedUrl,
+      previewUrl: `${process.env.S3_BUCKET}/${bucket}/${newFileName}`,
     });
   });
 }

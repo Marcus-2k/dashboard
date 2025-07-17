@@ -1,7 +1,9 @@
 import { API_BASE_URL } from "../constants/api-base-url";
 
 export interface PresignedUrlResponse {
-  url: string;
+  id: string;
+  presignedUrl: string;
+  previewUrl: string;
 }
 
 export class MinioService {
@@ -21,10 +23,11 @@ export class MinioService {
     return await response.json();
   }
 
-  static async uploadToBucker(
+  static async uploadToBucket(
     file: File,
     url: string,
     onProgress: (event: number) => void
+    // onError: () => void
   ) {
     const xhr = new XMLHttpRequest();
 
@@ -32,12 +35,15 @@ export class MinioService {
     xhr.upload.addEventListener("progress", (event) => {
       if (event.lengthComputable) {
         const progress = Math.round((event.loaded / event.total) * 100);
-        onProgress(progress);
+
+        if (progress < 100) {
+          onProgress(progress);
+        }
       }
     });
 
     // Load event (upload complete)
-    xhr.addEventListener("load", () => {
+    xhr.addEventListener("loadend", () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         onProgress(100);
       } else {
@@ -48,15 +54,27 @@ export class MinioService {
     // Error event
     xhr.addEventListener("error", () => {
       console.error(`Upload error for ${file.name}:`, xhr.statusText);
+      // onError();
     });
 
     // Abort event
     xhr.addEventListener("abort", () => {
       console.log(`Upload aborted for ${file.name}`);
+      // onError();
+    });
+
+    // Timeout event
+    xhr.addEventListener("timeout", () => {
+      console.error(`Upload timeout for ${file.name}`);
+      // onError();
     });
 
     xhr.open("PUT", url);
     xhr.setRequestHeader("Content-Type", file.type);
+
+    // Set longer timeout for slow connections
+    xhr.timeout = 300000; // 5 minutes
+
     xhr.send(file);
   }
 }
