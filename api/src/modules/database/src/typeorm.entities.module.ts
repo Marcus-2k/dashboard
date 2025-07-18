@@ -1,10 +1,17 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Product } from "../models/product.entity";
+import { ProductEntity } from "../models/product.entity";
+import { ProductRepositoryType } from "../port/product.repositorty";
+import { ProductAdapter } from "../repository/product.repository.adapter";
 
-const entities = [];
+const entities = [
+  {
+    provide: ProductRepositoryType,
+    useClass: ProductAdapter,
+  },
+];
 
-export const entitiesForFeature = [Product];
+export const entitiesForFeature = [ProductEntity];
 
 @Module({
   imports: [TypeOrmModule.forFeature(entitiesForFeature)],

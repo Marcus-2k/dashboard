@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import MinioController from "./controllers/minio.controller";
 import ProductController from "./controllers/product.controller";
 import { DatabaseModule } from "./modules/database/database.module";
+import { UseCaseModule } from "./use-cases/use-case.module";
 
 const controllers = [ProductController, MinioController];
 
@@ -12,6 +13,7 @@ const controllers = [ProductController, MinioController];
       isGlobal: true,
     }),
     DatabaseModule,
+    UseCaseModule,
   ],
   controllers: controllers,
   providers: [],
