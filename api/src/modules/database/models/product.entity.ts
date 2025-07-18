@@ -19,6 +19,10 @@ export class Product extends BaseEntity {
   @ApiProperty({ type: String })
   name: string;
 
+  @Column({ type: "varchar", array: true })
+  @ApiProperty({ type: String, isArray: true })
+  images: string[];
+
   @Column({ type: "varchar" })
   @ApiProperty({ type: String })
   description: string;
