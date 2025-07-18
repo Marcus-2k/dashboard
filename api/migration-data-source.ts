@@ -5,9 +5,6 @@ import { entitiesForFeature } from "./src/modules/database/src/typeorm.entities.
 
 const pathToMigrations = join(__dirname, "./src/migrations/*{.ts,.js}");
 
-console.log("pathToMigrations", pathToMigrations);
-console.log("entitiesForFeature", entitiesForFeature);
-
 const config: DataSourceOptions = {
   port: 5432,
   host: "localhost",
