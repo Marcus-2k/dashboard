@@ -5,7 +5,7 @@ import {
   ProductRepository,
   ProductRepositoryType,
 } from "src/modules/database/port/product.repositorty";
-import { Pagination } from "src/shared/class/pagination";
+import { Pagination } from "src/dto/general/request/pagination";
 import { UseCase } from "src/shared/class/use-case";
 import { FindOptionsWhere, ILike, Like } from "typeorm";
 import { Paginated } from "../../interfaces/paginated.response";

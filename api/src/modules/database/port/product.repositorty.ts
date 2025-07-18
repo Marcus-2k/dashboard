@@ -1,4 +1,5 @@
-import { FindOptionsRelations, FindOptionsWhere } from "typeorm";
+import { MessageResponse } from "src/dto/general/response/message.response";
+import { DeepPartial, FindOptionsRelations, FindOptionsWhere } from "typeorm";
 import { ProductEntity } from "../models/product.entity";
 
 export interface ProductRepository {
@@ -12,6 +13,12 @@ export interface ProductRepository {
   count(
     where?: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[],
   ): Promise<number>;
+
+  create(data: DeepPartial<ProductEntity>): Promise<ProductEntity>;
+
+  update(id: string, data: DeepPartial<ProductEntity>): Promise<ProductEntity>;
+
+  delete(id: string): Promise<MessageResponse>;
 }
 
 export const ProductRepositoryType = Symbol.for("ProductRepositoryType");

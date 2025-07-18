@@ -1,5 +1,11 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsRelations, FindOptionsWhere, Repository } from "typeorm";
+import { MessageResponse } from "src/dto/general/response/message.response";
+import {
+  DeepPartial,
+  FindOptionsRelations,
+  FindOptionsWhere,
+  Repository,
+} from "typeorm";
 import { ProductEntity } from "../models/product.entity";
 import { ProductRepository } from "../port/product.repositorty";
 
@@ -35,5 +41,22 @@ export class ProductAdapter implements ProductRepository {
     return this.repository.count({
       where,
     });
+  }
+
+  create(data: DeepPartial<ProductEntity>): Promise<ProductEntity> {
+    return this.repository.create(data).save();
+  }
+
+  update(id: string, data: ProductEntity): Promise<ProductEntity> {
+    return this.repository.save({ ...data, id });
+  }
+
+  async delete(id: string): Promise<MessageResponse> {
+    const result = await this.repository.softDelete(id);
+
+    return {
+      message: "Product deleted successfully",
+      success: result.affected && result.affected > 0 ? true : false,
+    };
   }
 }
