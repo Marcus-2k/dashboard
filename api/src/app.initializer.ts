@@ -1,6 +1,3 @@
-// import { FinalExceptionFilter } from "@app/filter";
-// import { LoggingInterceptor, PerformanceInterceptor } from "@app/interceptor";
-// import { SwitchableValidationPipe } from "@app/pipe";
 import { ValidationPipe } from "@nestjs/common";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -11,11 +8,6 @@ export function initApi(app: NestExpressApplication): void {
   app.setGlobalPrefix("api");
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  // app.useGlobalFilters(new FinalExceptionFilter());
-  // app.useGlobalInterceptors(new ApiResponseInterceptor());
-  // app.useGlobalInterceptors(new LoggingInterceptor());
-  // app.useGlobalInterceptors(new PerformanceInterceptor());
 }
 
 export function initDocs(app: NestExpressApplication): void {
