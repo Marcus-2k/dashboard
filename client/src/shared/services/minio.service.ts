@@ -7,6 +7,8 @@ export interface PresignedUrlResponse {
 }
 
 export class MinioService {
+  private static readonly baseUrl = `${API_BASE_URL}/api/minio`;
+
   static async getPresignedUrl(
     bucket: string,
     key: string
@@ -14,7 +16,7 @@ export class MinioService {
     const query = new URLSearchParams({ bucket, key });
 
     const response = await fetch(
-      `${API_BASE_URL}/minio/get-presigned-url?${query.toString()}`,
+      `${this.baseUrl}/get-presigned-url?${query.toString()}`,
       {
         method: "GET",
       }

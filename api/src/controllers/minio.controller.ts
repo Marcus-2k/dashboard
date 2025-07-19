@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import { GetPresignedUrlRequest } from "src/dto/minio/request/get-presigned-url.request";
 import { GetPresignedUrlResponse } from "src/dto/minio/response/get-presigned-url.response";
 import { GetPresignedUrlUseCase } from "src/use-cases/minio/get-presigned-url.use-case";
@@ -9,10 +9,10 @@ export default class MinioController {
     private readonly getPresignedUrlUseCase: GetPresignedUrlUseCase,
   ) {}
 
-  @Post("get-presigned-url")
+  @Get("get-presigned-url")
   async getPresignedUrl(
-    @Body() body: GetPresignedUrlRequest,
+    @Query() query: GetPresignedUrlRequest,
   ): Promise<GetPresignedUrlResponse> {
-    return this.getPresignedUrlUseCase.execute(body);
+    return this.getPresignedUrlUseCase.execute(query);
   }
 }
