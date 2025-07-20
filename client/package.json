@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-api:local": "npx @openapitools/openapi-generator-cli generate -i http://localhost:3000/docs-json -g typescript-fetch -o ./src/shared/api --additional-properties=supportsES6=true,withInterfaces=true,basePath=http://localhost:3000 --skip-validate-spec"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

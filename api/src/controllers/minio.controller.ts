@@ -1,4 +1,5 @@
 import { Controller, Get, Query } from "@nestjs/common";
+import { ApiOkResponse } from "@nestjs/swagger";
 import { GetPresignedUrlRequest } from "src/dto/minio/request/get-presigned-url.request";
 import { GetPresignedUrlResponse } from "src/dto/minio/response/get-presigned-url.response";
 import { GetPresignedUrlUseCase } from "src/use-cases/minio/get-presigned-url.use-case";
@@ -10,6 +11,7 @@ export default class MinioController {
   ) {}
 
   @Get("get-presigned-url")
+  @ApiOkResponse({ type: GetPresignedUrlResponse })
   async getPresignedUrl(
     @Query() query: GetPresignedUrlRequest,
   ): Promise<GetPresignedUrlResponse> {

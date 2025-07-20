@@ -27,6 +27,7 @@ export function initDocs(app: NestExpressApplication): void {
       bearerFormat: "JWT",
       description: "Login",
     })
+    .addServer("http://localhost:3000", "Local")
     .setDescription("API documentation")
     .setVersion(process.env.VERSION || "1.0.0")
     .setTitle("API")

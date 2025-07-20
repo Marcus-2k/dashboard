@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { ProductEntity } from "../models/product.entity";
 import { ProductRepository } from "../port/product.repositorty";
+import { NotFoundException } from "@nestjs/common";
 
 export class ProductAdapter implements ProductRepository {
   constructor(
@@ -30,6 +31,18 @@ export class ProductAdapter implements ProductRepository {
       skip,
       take,
     });
+  }
+
+  async findById(id: string): Promise<ProductEntity> {
+    const product = await this.repository.findOne({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+
+    return product;
   }
 
   /**

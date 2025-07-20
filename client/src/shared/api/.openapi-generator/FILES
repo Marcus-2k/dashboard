@@ -1,0 +1,11 @@
+apis/MinioApi.ts
+apis/ProductApi.ts
+apis/index.ts
+index.ts
+models/CreateProductRequest.ts
+models/GetPresignedUrlResponse.ts
+models/MessageResponse.ts
+models/ProductResponse.ts
+models/UpdateProductRequest.ts
+models/index.ts
+runtime.ts

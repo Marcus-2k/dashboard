@@ -9,13 +9,17 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
+import { ApiOkResponse } from "@nestjs/swagger";
 import { IdDto } from "src/dto/general/request/id";
+import { MessageResponse } from "src/dto/general/response/message.response";
 import { CreateProductRequest } from "src/dto/product/request/create-product.request";
 import { GetAllProductsRequest } from "src/dto/product/request/get-all-products.request";
 import { UpdateProductRequest } from "src/dto/product/request/update-product.request";
+import { ProductResponse } from "src/dto/product/response/product.response";
 import { CreateProductUseCase } from "src/use-cases/product/create-product.use-case";
 import { DeleteProductUseCase } from "src/use-cases/product/delete-product.use-case";
 import { GetAllProductsUseCase } from "src/use-cases/product/get-all-products.use-case";
+import { GetProductByIdUseCase } from "src/use-cases/product/get-product-by-id.use-case";
 import { UpdateProductUseCase } from "src/use-cases/product/update-product.use-case";
 
 @Controller("product")
@@ -29,6 +33,8 @@ export default class ProductController {
     private readonly updateProductUseCase: UpdateProductUseCase,
     @Inject(DeleteProductUseCase)
     private readonly deleteProductUseCase: DeleteProductUseCase,
+    @Inject(GetProductByIdUseCase)
+    private readonly getProductByIdUseCase: GetProductByIdUseCase,
   ) {}
 
   @Get()
@@ -36,12 +42,22 @@ export default class ProductController {
     return this.getAllProductsUseCase.execute(query);
   }
 
+  @Get(":id")
+  @ApiOkResponse({ type: ProductResponse })
+  async getProductById(@Param() param: IdDto): Promise<ProductResponse> {
+    return this.getProductByIdUseCase.execute(param);
+  }
+
   @Post()
-  async createProduct(@Body() body: CreateProductRequest) {
+  @ApiOkResponse({ type: ProductResponse })
+  async createProduct(
+    @Body() body: CreateProductRequest,
+  ): Promise<ProductResponse> {
     return this.createProductUseCase.execute(body);
   }
 
   @Patch(":id")
+  @ApiOkResponse({ type: ProductResponse })
   async updateProductById(
     @Param() param: IdDto,
     @Body() body: UpdateProductRequest,
@@ -50,7 +66,8 @@ export default class ProductController {
   }
 
   @Delete(":id")
-  async deleteProductById(@Param() param: IdDto) {
+  @ApiOkResponse({ type: MessageResponse })
+  async deleteProductById(@Param() param: IdDto): Promise<MessageResponse> {
     return this.deleteProductUseCase.execute(param);
   }
 }

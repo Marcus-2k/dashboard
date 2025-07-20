@@ -2,36 +2,49 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SaveIcon from "@mui/icons-material/Save";
-import { Button, IconButton } from "@mui/material";
+import { Button, CircularProgress, IconButton } from "@mui/material";
+import {
+  MinioApi,
+  ProductApi,
+  type CreateProductRequest,
+  type UpdateProductRequest,
+} from "@shared/api";
 import { S3_BUCKET_NAME } from "@shared/constants";
 import { UploadStatusEnum } from "@shared/enums";
-import { MinioService } from "@shared/services";
+import { MinioBucketService } from "@shared/services";
 import { Input, ProgressCard } from "@shared/ui";
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-interface Product {
+interface FormProduct {
   id?: string;
   name: string;
   description: string;
   price: number;
+  discountPrice: number | null;
   category: string;
   images: string[];
 }
 
+const minioApi = new MinioApi();
+const productApi = new ProductApi();
+
 export function UpsertProduct() {
-  console.log("init component");
+  // console.log("init component");
 
   const params = useParams();
   const isUpdate = !!params.id;
 
+  const navigate = useNavigate();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<Product>({
-    name: "warhammer",
+  const [formData, setFormData] = useState<FormProduct>({
+    name: "",
     description: "",
     price: 0,
+    discountPrice: null,
     category: "",
     images: [],
   });
@@ -46,10 +59,10 @@ export function UpsertProduct() {
   }>({});
 
   useEffect(() => {
-    console.log("init effect");
+    initForm();
 
     return () => {
-      console.log("destroy component");
+      console.log("destroy useEffect");
     };
   });
 
@@ -68,37 +81,39 @@ export function UpsertProduct() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    console.log("handleSubmit");
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
+    e.preventDefault();
 
-    // e.preventDefault();
-    // setIsLoading(true);
+    setIsLoading(true);
 
-    // try {
-    //   const productData = {
-    //     ...formData,
-    //     images: uploadedImages,
-    //   };
+    try {
+      const requestData: CreateProductRequest | UpdateProductRequest = {
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        discountPrice: formData.discountPrice,
+        images: formData.images,
+      };
 
-    //   if (isUpdate) {
-    //     // TODO: Implement ProductService.updateProduct(params.id, productData)
-    //     console.log("Updating product:", productData);
-    //   } else {
-    //     // TODO: Implement ProductService.createProduct(productData)
-    //     console.log("Creating product:", productData);
-    //   }
+      if (isUpdate) {
+        // productApi.productControllerUpdateProductById(params.id, productData);
+      } else {
+        const response = await productApi.productControllerCreateProduct({
+          createProductRequest: requestData,
+        });
 
-    //   // Simulate API call
-    //   await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    //   // Redirect to products list
-    //   window.location.href = "/products";
-    // } catch (error) {
-    //   console.error("Error saving product:", error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
-  };
+        if (response.id) {
+          navigate("../update/" + response.id, {
+            relative: "path",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("handleFileChange");
@@ -108,7 +123,7 @@ export function UpsertProduct() {
     if (files) {
       for (let index = 0; index < files.length; index++) {
         const file = files[index];
-        console.log("push file");
+
         await eventProcessFile(file);
       }
 
@@ -119,13 +134,11 @@ export function UpsertProduct() {
   };
 
   async function eventProcessFile(file: File): Promise<void> {
-    console.log("eventProcessFile");
-
     try {
-      const data = await MinioService.getPresignedUrl(
-        S3_BUCKET_NAME,
-        file.name
-      );
+      const data = await minioApi.minioControllerGetPresignedUrl({
+        bucket: S3_BUCKET_NAME,
+        key: file.name,
+      });
 
       setUploadProgress((prev) => {
         return {
@@ -151,9 +164,7 @@ export function UpsertProduct() {
     url: string,
     id: string
   ): Promise<void> {
-    console.log("uploadFile");
-
-    MinioService.uploadToBucket(file, url, (event) => {
+    MinioBucketService.uploadToBucket(file, url, (event) => {
       setUploadProgress((prev) => {
         const updated = { ...prev };
 
@@ -310,13 +321,23 @@ export function UpsertProduct() {
 
         {/* Submit Button */}
         <div className="flex gap-4">
-          <Button variant="contained" type="submit" color="success">
-            <SaveIcon />
-            {isLoading
-              ? "Saving..."
-              : isUpdate
-              ? "Update Product"
-              : "Create Product"}
+          <Button
+            variant="contained"
+            type="submit"
+            color="success"
+            onClick={handleSubmit}
+          >
+            {isLoading ? (
+              <>
+                <CircularProgress size={16} color="inherit" />
+                <span className="ml-2">Saving...</span>
+              </>
+            ) : (
+              <>
+                <SaveIcon />
+                {isUpdate ? "Update Product" : "Create Product"}
+              </>
+            )}
           </Button>
 
           <Button

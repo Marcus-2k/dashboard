@@ -1,30 +1,4 @@
-import { API_BASE_URL } from "../constants/api-base-url";
-
-export interface PresignedUrlResponse {
-  id: string;
-  presignedUrl: string;
-  previewUrl: string;
-}
-
-export class MinioService {
-  private static readonly baseUrl = `${API_BASE_URL}/api/minio`;
-
-  static async getPresignedUrl(
-    bucket: string,
-    key: string
-  ): Promise<PresignedUrlResponse> {
-    const query = new URLSearchParams({ bucket, key });
-
-    const response = await fetch(
-      `${this.baseUrl}/get-presigned-url?${query.toString()}`,
-      {
-        method: "GET",
-      }
-    );
-
-    return await response.json();
-  }
-
+export class MinioBucketService {
   static async uploadToBucket(
     file: File,
     url: string,

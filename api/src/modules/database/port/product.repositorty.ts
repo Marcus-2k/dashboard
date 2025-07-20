@@ -10,6 +10,8 @@ export interface ProductRepository {
     take?: number,
   ): Promise<ProductEntity[]>;
 
+  findById(id: string): Promise<ProductEntity>;
+
   count(
     where?: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[],
   ): Promise<number>;
