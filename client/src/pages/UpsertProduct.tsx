@@ -14,10 +14,10 @@ import { UploadStatusEnum } from "@shared/enums";
 import { MinioBucketService } from "@shared/services";
 import { Input, ProgressCard } from "@shared/ui";
 import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 interface FormProduct {
-  id?: string;
   name: string;
   description: string;
   price: number;
@@ -30,7 +30,7 @@ const minioApi = new MinioApi();
 const productApi = new ProductApi();
 
 export function UpsertProduct() {
-  // console.log("init component");
+  console.log("init component");
 
   const params = useParams();
   const isUpdate = !!params.id;
@@ -39,14 +39,26 @@ export function UpsertProduct() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [isFormInit, setIsFormInit] = useState(false);
+  const [isInit, setIsInit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<FormProduct>({
-    name: "",
-    description: "",
-    price: 0,
-    discountPrice: null,
-    category: "",
-    images: [],
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<FormProduct>({
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 0,
+      discountPrice: null,
+      category: "",
+      images: [],
+    },
+    mode: "onChange",
   });
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: {
@@ -59,31 +71,36 @@ export function UpsertProduct() {
   }>({});
 
   useEffect(() => {
+    if (isInit) {
+      return;
+    }
+
     initForm();
 
-    return () => {
-      console.log("destroy useEffect");
-    };
-  });
+    setIsInit(true);
 
-  function initForm() {
+    return () => {};
+  }, []);
+
+  async function initForm(): Promise<void> {
     if (isUpdate && params.id) {
       console.log("Loading product with ID:", params.id);
+
+      const response = await productApi.productControllerGetProductById({
+        id: params.id,
+      });
+
+      setValue("name", response.name);
+      setValue("description", response.description);
+      setValue("price", response.price);
+      setValue("discountPrice", response.discountPrice);
+      setValue("images", response.images);
+
+      setIsFormInit(true);
     }
   }
 
-  const handleInputChange = (field: keyof Product, value: string | number) => {
-    console.log("handleInputChange");
-
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  async function handleSubmit(e: React.FormEvent): Promise<void> {
-    e.preventDefault();
-
+  async function onSubmit(formData: FormProduct): Promise<void> {
     setIsLoading(true);
 
     try {
@@ -95,8 +112,11 @@ export function UpsertProduct() {
         images: formData.images,
       };
 
-      if (isUpdate) {
-        // productApi.productControllerUpdateProductById(params.id, productData);
+      if (isUpdate && params.id) {
+        await productApi.productControllerUpdateProductById({
+          id: params.id,
+          updateProductRequest: requestData,
+        });
       } else {
         const response = await productApi.productControllerCreateProduct({
           createProductRequest: requestData,
@@ -115,9 +135,7 @@ export function UpsertProduct() {
     }
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleFileChange");
-
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
 
     if (files) {
@@ -131,7 +149,7 @@ export function UpsertProduct() {
         fileInputRef.current.value = "";
       }
     }
-  };
+  }
 
   async function eventProcessFile(file: File): Promise<void> {
     try {
@@ -173,13 +191,11 @@ export function UpsertProduct() {
           event === 100 ? UploadStatusEnum.SUCCESS : UploadStatusEnum.PROGRESS;
 
         if (event === 100) {
-          setFormData((prev) => {
-            const newImages = prev.images.filter(
-              (image) => image !== updated[id].url
-            );
-            newImages.push(updated[id].url);
-            return { ...prev, images: newImages };
-          });
+          const images = getValues("images").filter(
+            (image) => image !== updated[id].url
+          );
+          images.push(updated[id].url);
+          setValue("images", images);
         }
 
         return updated;
@@ -188,9 +204,6 @@ export function UpsertProduct() {
   }
 
   function removeImage(fileName: string, url: string): void {
-    console.log("removeImage");
-    console.log("file name", fileName);
-
     setUploadProgress((prev) => {
       const newProgress = { ...prev };
 
@@ -199,10 +212,8 @@ export function UpsertProduct() {
       return newProgress;
     });
 
-    setFormData((prev) => {
-      const newImages = prev.images.filter((image) => image !== url);
-      return { ...prev, images: newImages };
-    });
+    const images = getValues("images").filter((image) => image !== url);
+    setValue("images", images);
   }
 
   return (
@@ -218,7 +229,7 @@ export function UpsertProduct() {
       </div>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="p-10 container mx-auto max-w-2xl"
       >
         {/* Product Images */}
@@ -279,54 +290,65 @@ export function UpsertProduct() {
         </div>
 
         {/* Basic Information */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+        {isFormInit && (
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
 
-          <div>
-            <div className="mt-4">
-              <Input
-                label="Product Name"
-                placeholder="Enter product name..."
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-              />
-            </div>
+            <div>
+              <div className="mt-4">
+                <Input
+                  label="Product Name"
+                  placeholder="Enter product name..."
+                  {...register("name", {
+                    required: "Product name is required",
+                  })}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              </div>
 
-            <div className="mt-4">
-              <Input
-                label="Description"
-                placeholder="Enter product description..."
-                value={formData.description}
-                onChange={(e) =>
-                  handleInputChange("description", e.target.value)
-                }
-                multiline={true}
-              />
-            </div>
+              <div className="mt-4">
+                <Input
+                  label="Description"
+                  placeholder="Enter product description..."
+                  {...register("description", {
+                    required: "Product description is required",
+                    maxLength: {
+                      value: 256,
+                      message:
+                        "Product description cannot exceed 256 characters",
+                    },
+                  })}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  multiline={true}
+                />
+              </div>
 
-            <div className="mt-4">
-              <Input
-                label="Price"
-                placeholder="0.00"
-                type="number"
-                min={0.0}
-                value={formData.price}
-                onChange={(e) =>
-                  handleInputChange("price", parseFloat(e.target.value) || 0)
-                }
-              />
+              <div className="mt-4">
+                <Input
+                  label="Price"
+                  placeholder="0.00"
+                  type="number"
+                  {...register("price", {
+                    required: "Product price is required",
+                    min: {
+                      value: 0.0,
+                      message: "Product price must be greater than 0",
+                    },
+                    valueAsNumber: true,
+                  })}
+                  error={!!errors.price}
+                  helperText={errors.price?.message}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Submit Button */}
         <div className="flex gap-4">
-          <Button
-            variant="contained"
-            type="submit"
-            color="success"
-            onClick={handleSubmit}
-          >
+          <Button variant="contained" type="submit" color="success">
             {isLoading ? (
               <>
                 <CircularProgress size={16} color="inherit" />
@@ -338,14 +360,6 @@ export function UpsertProduct() {
                 {isUpdate ? "Update Product" : "Create Product"}
               </>
             )}
-          </Button>
-
-          <Button
-            variant="outlined"
-            type="button"
-            onClick={() => console.log(formData)}
-          >
-            Show Form State
           </Button>
 
           <Link to="/products">
