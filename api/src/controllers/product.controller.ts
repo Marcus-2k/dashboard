@@ -11,15 +11,17 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import {
+  CreateProductUseCase,
+  DeleteProductUseCase,
+  GetAllProductsUseCase,
+  GetProductByIdUseCase,
+  UpdateProductUseCase,
+} from "@use-cases/product";
 import { CreateProductRequest } from "src/dto/product/request/create-product.request";
 import { GetAllProductsRequest } from "src/dto/product/request/get-all-products.request";
 import { UpdateProductRequest } from "src/dto/product/request/update-product.request";
 import { ProductResponse } from "src/dto/product/response/product.response";
-import { CreateProductUseCase } from "src/use-cases/product/create-product.use-case";
-import { DeleteProductUseCase } from "src/use-cases/product/delete-product.use-case";
-import { GetAllProductsUseCase } from "src/use-cases/product/get-all-products.use-case";
-import { GetProductByIdUseCase } from "src/use-cases/product/get-product-by-id.use-case";
-import { UpdateProductUseCase } from "src/use-cases/product/update-product.use-case";
 
 @Controller("product")
 export default class ProductController {

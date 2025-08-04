@@ -3,7 +3,8 @@
     "module": "commonjs",
     "paths": {
       "@shared/*": ["src/shared/*"],
-      "@dto/*": ["src/dto/*"]
+      "@dto/*": ["src/dto/*"],
+      "@use-cases/*": ["src/use-cases/*"]
     },
     "declaration": true,
     "removeComments": true,
