@@ -5,7 +5,7 @@ import { debounce } from "@shared/functions";
 import { CircularProgressBox, Input } from "@shared/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const productApi = new ProductApi();
 
@@ -84,6 +84,11 @@ export const Products = () => {
     setProducts(response);
   }
 
+  async function deleteProductById(id: string) {
+    await productApi.deleteProductById({ id });
+    initProducts();
+  }
+
   return (
     <>
       <div className="flex gap-2">
@@ -117,6 +122,21 @@ export const Products = () => {
                   <p className="text-sm text-gray-500">
                     {product.price}&nbsp;₴
                   </p>
+                  <div className="flex gap-2">
+                    <Button variant="contained" color="primary">
+                      <Link to={`/products/update/${product.id}`}>Update</Link>
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        deleteProductById(product.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </li>
               ))}
             </>
