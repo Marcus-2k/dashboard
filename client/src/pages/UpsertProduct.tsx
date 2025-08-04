@@ -86,7 +86,7 @@ export function UpsertProduct() {
     if (isUpdate && params.id) {
       console.log("Loading product with ID:", params.id);
 
-      const response = await productApi.productControllerGetProductById({
+      const response = await productApi.getProductById({
         id: params.id,
       });
 
@@ -95,9 +95,9 @@ export function UpsertProduct() {
       setValue("price", response.price);
       setValue("discountPrice", response.discountPrice);
       setValue("images", response.images);
-
-      setIsFormInit(true);
     }
+
+    setIsFormInit(true);
   }
 
   async function onSubmit(formData: FormProduct): Promise<void> {
@@ -113,12 +113,12 @@ export function UpsertProduct() {
       };
 
       if (isUpdate && params.id) {
-        await productApi.productControllerUpdateProductById({
+        await productApi.updateProductById({
           id: params.id,
           updateProductRequest: requestData,
         });
       } else {
-        const response = await productApi.productControllerCreateProduct({
+        const response = await productApi.createProduct({
           createProductRequest: requestData,
         });
 

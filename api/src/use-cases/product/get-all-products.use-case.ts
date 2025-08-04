@@ -1,3 +1,4 @@
+import { PaginationRequest } from "@dto/general";
 import { Inject, Injectable } from "@nestjs/common";
 import { ProductResponse } from "src/dto/product/response/product.response";
 import { ProductEntity } from "src/modules/database/models/product.entity";
@@ -5,12 +6,11 @@ import {
   ProductRepository,
   ProductRepositoryType,
 } from "src/modules/database/port/product.repositorty";
-import { Pagination } from "src/dto/general/request/pagination";
 import { UseCase } from "src/shared/class/use-case";
-import { FindOptionsWhere, ILike, Like } from "typeorm";
+import { FindOptionsWhere, ILike } from "typeorm";
 import { Paginated } from "../../interfaces/paginated.response";
 
-export interface GetAllProductsInput extends Pagination {
+export interface GetAllProductsInput extends PaginationRequest {
   search: string | null;
 }
 

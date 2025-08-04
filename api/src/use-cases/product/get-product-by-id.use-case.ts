@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IdDto } from "src/dto/general/request/id";
+import { IdDto } from "src/dto/general/request/id.request";
 import { ProductResponse } from "src/dto/product/response/product.response";
 import {
   ProductRepository,

@@ -1,3 +1,4 @@
+import { IdDto, MessageResponse } from "@dto/general";
 import {
   Body,
   Controller,
@@ -9,9 +10,7 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { ApiOkResponse } from "@nestjs/swagger";
-import { IdDto } from "src/dto/general/request/id";
-import { MessageResponse } from "src/dto/general/response/message.response";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { CreateProductRequest } from "src/dto/product/request/create-product.request";
 import { GetAllProductsRequest } from "src/dto/product/request/get-all-products.request";
 import { UpdateProductRequest } from "src/dto/product/request/update-product.request";
@@ -38,17 +37,34 @@ export default class ProductController {
   ) {}
 
   @Get()
-  async getAllProducts(@Query() query: GetAllProductsRequest) {
-    return this.getAllProductsUseCase.execute(query);
+  @ApiOperation({
+    operationId: "getProducts",
+    description: "Get products with pagination",
+  })
+  @ApiOkResponse({ type: ProductResponse, isArray: true })
+  async getProducts(
+    @Query() query: GetAllProductsRequest,
+  ): Promise<ProductResponse[]> {
+    const response = await this.getAllProductsUseCase.execute(query);
+
+    return response.items;
   }
 
   @Get(":id")
+  @ApiOperation({
+    operationId: "getProductById",
+    description: "Get a product by id",
+  })
   @ApiOkResponse({ type: ProductResponse })
   async getProductById(@Param() param: IdDto): Promise<ProductResponse> {
     return this.getProductByIdUseCase.execute(param);
   }
 
   @Post()
+  @ApiOperation({
+    operationId: "createProduct",
+    description: "Create a product",
+  })
   @ApiOkResponse({ type: ProductResponse })
   async createProduct(
     @Body() body: CreateProductRequest,
@@ -57,6 +73,10 @@ export default class ProductController {
   }
 
   @Patch(":id")
+  @ApiOperation({
+    operationId: "updateProductById",
+    description: "Update a product by id",
+  })
   @ApiOkResponse({ type: ProductResponse })
   async updateProductById(
     @Param() param: IdDto,
@@ -66,6 +86,10 @@ export default class ProductController {
   }
 
   @Delete(":id")
+  @ApiOperation({
+    operationId: "deleteProductById",
+    description: "Delete a product by id",
+  })
   @ApiOkResponse({ type: MessageResponse })
   async deleteProductById(@Param() param: IdDto): Promise<MessageResponse> {
     return this.deleteProductUseCase.execute(param);

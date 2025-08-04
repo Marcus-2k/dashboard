@@ -1,8 +1,8 @@
+import { PaginationRequest } from "@dto/general";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString } from "class-validator";
-import { Pagination } from "src/dto/general/request/pagination";
 
-export class GetAllProductsRequest extends Pagination {
+export class GetAllProductsRequest extends PaginationRequest {
   @ApiProperty({ type: String, required: false })
   @IsOptional()
   @IsString()

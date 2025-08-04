@@ -1,6 +1,14 @@
+import {
+  DashboardTab,
+  Home,
+  OverviewTab,
+  PageWrapper,
+  Products,
+  StatsTab,
+  UpsertProduct,
+} from "@pages/index";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Home, UpsertProduct } from "./pages";
-import { DashboardTab, OverviewTab, StatsTab } from "./pages/HomeTabs";
+import { ThemeProvider } from "./providers/Theme";
 
 export function App() {
   return (
@@ -15,7 +23,15 @@ export function App() {
 
         <Route
           path="/products"
-          element={<div>Products List - Coming Soon</div>}
+          element={
+            <>
+              <ThemeProvider>
+                <PageWrapper>
+                  <Products />
+                </PageWrapper>
+              </ThemeProvider>
+            </>
+          }
         />
 
         <Route path="/products/new" element={<UpsertProduct />} />

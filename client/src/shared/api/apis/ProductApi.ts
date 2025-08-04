@@ -31,25 +31,25 @@ import {
     UpdateProductRequestToJSON,
 } from '../models/index';
 
-export interface ProductControllerCreateProductRequest {
+export interface CreateProductOperationRequest {
     createProductRequest: CreateProductRequest;
 }
 
-export interface ProductControllerDeleteProductByIdRequest {
+export interface DeleteProductByIdRequest {
     id: string;
 }
 
-export interface ProductControllerGetAllProductsRequest {
+export interface GetProductByIdRequest {
+    id: string;
+}
+
+export interface GetProductsRequest {
     page?: number;
     pageSize?: number;
     search?: string;
 }
 
-export interface ProductControllerGetProductByIdRequest {
-    id: string;
-}
-
-export interface ProductControllerUpdateProductByIdRequest {
+export interface UpdateProductByIdRequest {
     id: string;
     updateProductRequest: UpdateProductRequest;
 }
@@ -62,33 +62,56 @@ export interface ProductControllerUpdateProductByIdRequest {
  */
 export interface ProductApiInterface {
     /**
-     * 
+     * Create a product
+     * @summary 
      * @param {CreateProductRequest} createProductRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductApiInterface
      */
-    productControllerCreateProductRaw(requestParameters: ProductControllerCreateProductRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
+    createProductRaw(requestParameters: CreateProductOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
 
     /**
-     */
-    productControllerCreateProduct(requestParameters: ProductControllerCreateProductRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
-
-    /**
+     * Create a product
      * 
+     */
+    createProduct(requestParameters: CreateProductOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
+
+    /**
+     * Delete a product by id
+     * @summary 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductApiInterface
      */
-    productControllerDeleteProductByIdRaw(requestParameters: ProductControllerDeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MessageResponse>>;
+    deleteProductByIdRaw(requestParameters: DeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MessageResponse>>;
 
     /**
-     */
-    productControllerDeleteProductById(requestParameters: ProductControllerDeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MessageResponse>;
-
-    /**
+     * Delete a product by id
      * 
+     */
+    deleteProductById(requestParameters: DeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MessageResponse>;
+
+    /**
+     * Get a product by id
+     * @summary 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProductApiInterface
+     */
+    getProductByIdRaw(requestParameters: GetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
+
+    /**
+     * Get a product by id
+     * 
+     */
+    getProductById(requestParameters: GetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
+
+    /**
+     * Get products with pagination
+     * @summary 
      * @param {number} [page] 
      * @param {number} [pageSize] 
      * @param {string} [search] 
@@ -96,38 +119,30 @@ export interface ProductApiInterface {
      * @throws {RequiredError}
      * @memberof ProductApiInterface
      */
-    productControllerGetAllProductsRaw(requestParameters: ProductControllerGetAllProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+    getProductsRaw(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ProductResponse>>>;
 
     /**
-     */
-    productControllerGetAllProducts(requestParameters: ProductControllerGetAllProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
-
-    /**
+     * Get products with pagination
      * 
-     * @param {string} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ProductApiInterface
      */
-    productControllerGetProductByIdRaw(requestParameters: ProductControllerGetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
+    getProducts(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ProductResponse>>;
 
     /**
-     */
-    productControllerGetProductById(requestParameters: ProductControllerGetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
-
-    /**
-     * 
+     * Update a product by id
+     * @summary 
      * @param {string} id 
      * @param {UpdateProductRequest} updateProductRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductApiInterface
      */
-    productControllerUpdateProductByIdRaw(requestParameters: ProductControllerUpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
+    updateProductByIdRaw(requestParameters: UpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>>;
 
     /**
+     * Update a product by id
+     * 
      */
-    productControllerUpdateProductById(requestParameters: ProductControllerUpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
+    updateProductById(requestParameters: UpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse>;
 
 }
 
@@ -137,12 +152,14 @@ export interface ProductApiInterface {
 export class ProductApi extends runtime.BaseAPI implements ProductApiInterface {
 
     /**
+     * Create a product
+     * 
      */
-    async productControllerCreateProductRaw(requestParameters: ProductControllerCreateProductRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
+    async createProductRaw(requestParameters: CreateProductOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
         if (requestParameters['createProductRequest'] == null) {
             throw new runtime.RequiredError(
                 'createProductRequest',
-                'Required parameter "createProductRequest" was null or undefined when calling productControllerCreateProduct().'
+                'Required parameter "createProductRequest" was null or undefined when calling createProduct().'
             );
         }
 
@@ -167,19 +184,23 @@ export class ProductApi extends runtime.BaseAPI implements ProductApiInterface {
     }
 
     /**
+     * Create a product
+     * 
      */
-    async productControllerCreateProduct(requestParameters: ProductControllerCreateProductRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
-        const response = await this.productControllerCreateProductRaw(requestParameters, initOverrides);
+    async createProduct(requestParameters: CreateProductOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
+        const response = await this.createProductRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
+     * Delete a product by id
+     * 
      */
-    async productControllerDeleteProductByIdRaw(requestParameters: ProductControllerDeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MessageResponse>> {
+    async deleteProductByIdRaw(requestParameters: DeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MessageResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling productControllerDeleteProductById().'
+                'Required parameter "id" was null or undefined when calling deleteProductById().'
             );
         }
 
@@ -202,15 +223,58 @@ export class ProductApi extends runtime.BaseAPI implements ProductApiInterface {
     }
 
     /**
+     * Delete a product by id
+     * 
      */
-    async productControllerDeleteProductById(requestParameters: ProductControllerDeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MessageResponse> {
-        const response = await this.productControllerDeleteProductByIdRaw(requestParameters, initOverrides);
+    async deleteProductById(requestParameters: DeleteProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MessageResponse> {
+        const response = await this.deleteProductByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
+     * Get a product by id
+     * 
      */
-    async productControllerGetAllProductsRaw(requestParameters: ProductControllerGetAllProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async getProductByIdRaw(requestParameters: GetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getProductById().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/api/product/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProductResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a product by id
+     * 
+     */
+    async getProductById(requestParameters: GetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
+        const response = await this.getProductByIdRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get products with pagination
+     * 
+     */
+    async getProductsRaw(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ProductResponse>>> {
         const queryParameters: any = {};
 
         if (requestParameters['page'] != null) {
@@ -237,64 +301,34 @@ export class ProductApi extends runtime.BaseAPI implements ProductApiInterface {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ProductResponseFromJSON));
     }
 
     /**
+     * Get products with pagination
+     * 
      */
-    async productControllerGetAllProducts(requestParameters: ProductControllerGetAllProductsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.productControllerGetAllProductsRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async productControllerGetProductByIdRaw(requestParameters: ProductControllerGetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling productControllerGetProductById().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/api/product/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProductResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async productControllerGetProductById(requestParameters: ProductControllerGetProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
-        const response = await this.productControllerGetProductByIdRaw(requestParameters, initOverrides);
+    async getProducts(requestParameters: GetProductsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ProductResponse>> {
+        const response = await this.getProductsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
+     * Update a product by id
+     * 
      */
-    async productControllerUpdateProductByIdRaw(requestParameters: ProductControllerUpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
+    async updateProductByIdRaw(requestParameters: UpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProductResponse>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling productControllerUpdateProductById().'
+                'Required parameter "id" was null or undefined when calling updateProductById().'
             );
         }
 
         if (requestParameters['updateProductRequest'] == null) {
             throw new runtime.RequiredError(
                 'updateProductRequest',
-                'Required parameter "updateProductRequest" was null or undefined when calling productControllerUpdateProductById().'
+                'Required parameter "updateProductRequest" was null or undefined when calling updateProductById().'
             );
         }
 
@@ -320,9 +354,11 @@ export class ProductApi extends runtime.BaseAPI implements ProductApiInterface {
     }
 
     /**
+     * Update a product by id
+     * 
      */
-    async productControllerUpdateProductById(requestParameters: ProductControllerUpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
-        const response = await this.productControllerUpdateProductByIdRaw(requestParameters, initOverrides);
+    async updateProductById(requestParameters: UpdateProductByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProductResponse> {
+        const response = await this.updateProductByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
