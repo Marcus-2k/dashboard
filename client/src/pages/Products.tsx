@@ -10,6 +10,8 @@ import { Link, useSearchParams } from "react-router-dom";
 const productApi = new ProductApi();
 
 export const Products = () => {
+  console.log("producs");
+
   const [products, setProducts] = useState<ProductResponse[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -62,18 +64,18 @@ export const Products = () => {
   );
 
   useEffect(() => {
-    setSearchTerm(searchValue);
-    updateSearchParams(searchValue);
-    debouncedSearch(searchValue);
-  }, [searchValue, debouncedSearch, updateSearchParams]);
-
-  useEffect(() => {
     if (initialSearch) {
       debouncedSearch(initialSearch);
     } else {
       initProducts();
     }
   }, []);
+
+  useEffect(() => {
+    setSearchTerm(searchValue);
+    updateSearchParams(searchValue);
+    debouncedSearch(searchValue);
+  }, [searchValue, debouncedSearch, updateSearchParams]);
 
   async function initProducts() {
     const response = await productApi.getProducts({
@@ -86,6 +88,7 @@ export const Products = () => {
 
   async function deleteProductById(id: string) {
     await productApi.deleteProductById({ id });
+
     initProducts();
   }
 
@@ -97,6 +100,10 @@ export const Products = () => {
         <Button type="submit" variant="contained">
           Search
         </Button>
+
+        <Button type="submit" variant="contained">
+          <Link to="/products/new">Create</Link>
+        </Button>
       </div>
 
       {isSearching ? (
@@ -104,7 +111,7 @@ export const Products = () => {
           <CircularProgressBox size={100} />
         </div>
       ) : (
-        <ul className="mt-4 flex gap-2 flex-wrap mx-4 justify-between">
+        <ul className="mt-4 flex gap-2 flex-wrap justify-between">
           {products.length === 0 ? (
             <EmptyState message="No products found" />
           ) : (

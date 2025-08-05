@@ -2,6 +2,7 @@ import { environment } from "@shared/environment/environment";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.tsx";
+import "./i18n";
 import "./index.css";
 
 if (environment.environment === "prod") {

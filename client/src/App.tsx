@@ -1,45 +1,41 @@
-import {
-  DashboardTab,
-  Home,
-  OverviewTab,
-  PageWrapper,
-  Products,
-  StatsTab,
-  UpsertProduct,
-} from "@pages/index";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ThemeProvider } from "./providers/Theme";
+import { MainLayout } from "@features/main-layout";
+import { DashboardPage, LoginPage, Products, UpsertProduct } from "@pages";
+import { Authorized } from "@pages/authorized";
+import { NotAuthorized } from "@pages/not-authorized";
+import { AuthProvider } from "@providers";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 export function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/home" element={<Home />}>
-          <Route path="dashboard" index element={<DashboardTab />} />
-          <Route path="overview" element={<OverviewTab />} />
-          <Route path="stats" element={<StatsTab />} />
-          <Route index element={<Navigate to="/home/dashboard" replace />} />
-        </Route>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public route, only for unauthenticated */}
+          <Route
+            path="/login"
+            element={
+              <NotAuthorized>
+                <LoginPage />
+              </NotAuthorized>
+            }
+          />
 
-        <Route
-          path="/products"
-          element={
-            <>
-              <ThemeProvider>
-                <PageWrapper>
-                  <Products />
-                </PageWrapper>
-              </ThemeProvider>
-            </>
-          }
-        />
-
-        <Route path="/products/new" element={<UpsertProduct />} />
-
-        <Route path="/products/update/:id" element={<UpsertProduct />} />
-
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Protected routes, only for authenticated */}
+          <Route
+            path="/"
+            element={
+              <Authorized>
+                <MainLayout />
+              </Authorized>
+            }
+          >
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="products" element={<Products />} />
+            <Route path="products/new" element={<UpsertProduct />} />
+            <Route path="products/update/:id" element={<UpsertProduct />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

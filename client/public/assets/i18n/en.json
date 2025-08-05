@@ -1,0 +1,12 @@
+{
+  "pages": {
+    "home": {
+      "title": "Welcome to Product Manager",
+      "description": "Manage your products and upload files with ease",
+      "buttons": {
+        "login": "Login",
+        "dashboard": "Dashboard"
+      }
+    }
+  }
+}
