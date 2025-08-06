@@ -5,7 +5,7 @@ import { debounce } from "@shared/functions";
 import { CircularProgressBox, Input } from "@shared/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const productApi = new ProductApi();
 
@@ -17,7 +17,7 @@ export const Products = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const initialSearch = searchParams.get("search") || "";
+  const initialSearch: string = searchParams.get("search") || "";
 
   const { register, watch } = useForm<{ search: string }>({
     defaultValues: {
@@ -42,10 +42,12 @@ export const Products = () => {
     debounce(async (term: string) => {
       if (!term.trim()) {
         await initProducts();
+
         return;
       }
 
       setIsSearching(true);
+
       try {
         const response = await productApi.getProducts({
           page: 1,
@@ -97,52 +99,67 @@ export const Products = () => {
       <div className="flex gap-2">
         <Input placeholder="Search products..." {...register("search")} />
 
-        <Button type="submit" variant="contained">
-          Search
-        </Button>
-
-        <Button type="submit" variant="contained">
-          <Link to="/products/new">Create</Link>
-        </Button>
+        <a href="/products/new">
+          <Button className="h-full" type="submit" variant="contained">
+            Create
+          </Button>
+        </a>
       </div>
 
       {isSearching ? (
-        <div className="flex justify-center items-center text-gray-500 p-4">
+        <div className="flex justify-center items-center text-gray-500">
           <CircularProgressBox size={100} />
         </div>
       ) : (
-        <ul className="mt-4 flex gap-2 flex-wrap justify-between">
+        <ul className="mt-4 flex flex-wrap gap-2 justify-between">
           {products.length === 0 ? (
             <EmptyState message="No products found" />
           ) : (
             <>
               {products.map((product) => (
-                <li key={product.id} className="flex flex-col gap-2 w-48">
+                <li
+                  key={product.id}
+                  className="flex flex-col gap-2 shadow-xl/20  w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.33%-0.5rem)] xl:w-[calc(25%-0.5rem)]"
+                >
                   <img
                     src={product.images[0]}
                     alt={product.name}
-                    className="h-48 w-inherit object-cover rounded-md"
+                    className="min-h-96 md:h-80 w-inherit object-cover rounded-md"
                   />
-                  <h2 className="text-lg font-bold line-clamp-1">
-                    {product.name}
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    {product.price}&nbsp;₴
-                  </p>
-                  <div className="flex gap-2">
-                    <Button variant="contained" color="primary">
-                      <Link to={`/products/update/${product.id}`}>Update</Link>
-                    </Button>
+                  <div className="flex flex-col gap-2 p-2">
+                    <h2 className="text-lg font-bold line-clamp-1">
+                      {product.name}
+                    </h2>
 
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => {
-                        deleteProductById(product.id);
-                      }}
-                    >
-                      Delete
-                    </Button>
+                    <p className="text-sm text-gray-500">
+                      {product.price}&nbsp;₴
+                    </p>
+
+                    <div className="flex gap-4">
+                      <a
+                        href={`/products/update/${product.id}`}
+                        className="block w-[calc(50%-0.5rem)]"
+                      >
+                        <Button
+                          className="w-full"
+                          variant="contained"
+                          color="primary"
+                        >
+                          Update
+                        </Button>
+                      </a>
+
+                      <Button
+                        className="w-[calc(50%-0.5rem)]"
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                          deleteProductById(product.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </li>
               ))}

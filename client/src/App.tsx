@@ -3,7 +3,7 @@ import { DashboardPage, LoginPage, Products, UpsertProduct } from "@pages";
 import { Authorized } from "@pages/authorized";
 import { NotAuthorized } from "@pages/not-authorized";
 import { AuthProvider } from "@providers";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 export function App() {
   return (
@@ -29,6 +29,8 @@ export function App() {
               </Authorized>
             }
           >
+            {/* Redirect from root to dashboard */}
+            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="products" element={<Products />} />
             <Route path="products/new" element={<UpsertProduct />} />

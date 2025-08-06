@@ -1,4 +1,3 @@
-import { PageWrapper } from "@pages";
 import { Link, useLocation } from "react-router-dom";
 
 export interface SidebarProps {
@@ -14,7 +13,7 @@ export function Sidebar({ children }: SidebarProps) {
 
   return (
     <div className="flex">
-      <div className="relative w-[250px] bg-gray-100 p-4 h-screen">
+      <div className="relative w-[220px] bg-gray-100 p-4 h-screen">
         {/* Current URL Display */}
         <div className="mb-4 p-2 bg-white rounded border">
           <p className="text-xs text-gray-500">Current URL:</p>
@@ -54,9 +53,7 @@ export function Sidebar({ children }: SidebarProps) {
         </ul>
       </div>
 
-      <div className="w-[calc(100%-250px)]">
-        <PageWrapper>{children}</PageWrapper>
-      </div>
+      <div className="w-[calc(100%-220px)]">{children}</div>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import HomeIcon from "@mui/icons-material/Home";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import SaveIcon from "@mui/icons-material/Save";
 import { Button, CircularProgress, IconButton } from "@mui/material";
 import {
@@ -15,6 +17,7 @@ import { MinioBucketService } from "@shared/services";
 import { Input, ProgressCard } from "@shared/ui";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 interface FormProduct {
@@ -30,8 +33,6 @@ const minioApi = new MinioApi();
 const productApi = new ProductApi();
 
 export function UpsertProduct() {
-  console.log("init component");
-
   const params = useParams();
   const isUpdate = !!params.id;
 
@@ -42,6 +43,9 @@ export function UpsertProduct() {
   const [isFormInit, setIsFormInit] = useState(false);
   const [isInit, setIsInit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "pages.upsert_product",
+  });
 
   const {
     register,
@@ -218,20 +222,19 @@ export function UpsertProduct() {
 
   return (
     <>
-      <div className="p-10 container mx-auto">
-        <h1 className="text-2xl font-bold flex gap-2 items-center">
-          <Link to="/products" className="text-blue-500">
-            BACK
-          </Link>
-          <span>-</span>
-          <span>{isUpdate ? "Update Product" : "Create Product"}</span>
+      <div className="">
+        <h1 className="text-lg  flex gap-2 items-center">
+          <a href="/">
+            <HomeIcon />
+          </a>
+          <KeyboardArrowLeftIcon />
+          <a href="/products">{t("breadcrumbs.products")}</a>
+          <KeyboardArrowLeftIcon />
+          <p>{isUpdate ? t("breadcrumbs.update") : t("breadcrumbs.create")}</p>
         </h1>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="p-10 container mx-auto max-w-2xl"
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         {/* Product Images */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-xl font-semibold mb-4">Product Images</h2>
