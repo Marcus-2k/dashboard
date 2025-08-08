@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/api",
+    "baseUrl": "./",
+    "paths": {
+      "@dto/*": ["src/dto/*"],
+      "@shared/*": ["src/shared/*"],
+      "@use-cases/*": ["src/use-cases/*"],
+
+      "database/database": ["../../libs/database/src"],
+      "database/database/*": ["../../libs/database/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+}
