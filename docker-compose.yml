@@ -15,8 +15,8 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
+      interval: 10s
+      timeout: 5s
       retries: 3
 
   minio-setup:
@@ -37,3 +37,53 @@ services:
         /tmp/mc anonymous set download myminio/storage
       "
     restart: "no"
+
+  client:
+    build:
+      context: ./
+      dockerfile: client/Dockerfile.yaml
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: server/apps/api/Dockerfile.yaml
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - ENV=production
+      - NODE_ENV=production
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=database_name
+      - S3_BUCKET=http://minio:9000
+      - MINIO_PORT=9000
+      - MINIO_ENDPOINT=minio
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - NO_COLOR=true
+      - LOG_LEVEL=info
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: database_name
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5100:5432"
+    volumes:
+      - database_storage:/var/lib/postgresql/data
+
+volumes:
+  database_storage:

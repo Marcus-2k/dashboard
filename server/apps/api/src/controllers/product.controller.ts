@@ -1,5 +1,11 @@
 import { IdDto, MessageResponse } from "@dto/general";
 import {
+  CreateProductRequest,
+  GetAllProductsRequest,
+  ProductResponse,
+  UpdateProductRequest,
+} from "@dto/product";
+import {
   Body,
   Controller,
   Delete,
@@ -11,7 +17,6 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-// import { Client, } from "@notionhq/client";
 import {
   CreateProductUseCase,
   DeleteProductUseCase,
@@ -19,10 +24,6 @@ import {
   GetProductByIdUseCase,
   UpdateProductUseCase,
 } from "@use-cases/product";
-import { CreateProductRequest } from "src/dto/product/request/create-product.request";
-import { GetAllProductsRequest } from "src/dto/product/request/get-all-products.request";
-import { UpdateProductRequest } from "src/dto/product/request/update-product.request";
-import { ProductResponse } from "src/dto/product/response/product.response";
 
 @Controller("product")
 export default class ProductController {
@@ -37,26 +38,7 @@ export default class ProductController {
     private readonly deleteProductUseCase: DeleteProductUseCase,
     @Inject(GetProductByIdUseCase)
     private readonly getProductByIdUseCase: GetProductByIdUseCase,
-  ) {
-    // this.invitePeopleToMyNotionPage();
-  }
-
-  // private async invitePeopleToMyNotionPage() {
-  //   const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-  //   console.log(notion);
-
-  //   console.log("me", await notion.users.me({}));
-  //   console.log("list", await notion.users.list({}));
-  //   try {
-  //     const result = await notion.pages.update({
-  //       page_id: "My-Namespace-2465c065ab8a80faadbcf46f54d80272",
-  //     });
-  //     console.log(result);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  ) {}
 
   @Get()
   @ApiOperation({

@@ -1,6 +1,6 @@
+import { GetPresignedUrlRequest } from "@dto/minio";
 import { Injectable } from "@nestjs/common";
 import { Client } from "minio";
-import { GetPresignedUrlRequest } from "src/dto/minio/request/get-presigned-url.request";
 import { v4 } from "uuid";
 
 @Injectable()

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api:local": "npx @openapitools/openapi-generator-cli generate -i http://localhost:3000/docs-json -g typescript-fetch -o ./src/shared/api --additional-properties=supportsES6=true,withInterfaces=true,basePath=http://localhost:3000 --skip-validate-spec"
+    "prettify": "prettier --write \"src/**/*.{ts,scss,html}\"",
+    "generate-api:local": "npx @openapitools/openapi-generator-cli generate -i http://localhost:3000/docs-json -g typescript-fetch -o ./src/shared/api --additional-properties=supportsES6=true,withInterfaces=true,basePath=http://localhost:3000 --skip-validate-spec && npm run prettify"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -17,7 +18,6 @@
     "@mui/material": "^7.2.0",
     "@mui/x-data-grid": "^8.6.0",
     "@tailwindcss/vite": "^4.1.11",
-    "aws-amplify": "^6.15.5",
     "i18next": "^25.3.2",
     "i18next-http-backend": "^3.0.2",
     "react": "^19.1.0",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/node": "^24.2.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.10.2",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0"

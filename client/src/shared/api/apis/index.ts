@@ -1,4 +1,4 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './MinioApi';
-export * from './ProductApi';
+export * from "./MinioApi";
+export * from "./ProductApi";

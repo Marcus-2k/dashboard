@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import { join } from "path";
 import { DataSource, DataSourceOptions } from "typeorm";
 import { SnakeNamingStrategy } from "./libs/database/src/snake-naming.strategy";
@@ -8,12 +9,14 @@ const pathToMigrations = join(
   "./apps/api/src/migrations/*{.ts,.js}",
 );
 
+dotenv.config();
+
 const config: DataSourceOptions = {
-  port: 5432,
-  host: "localhost",
-  username: "postgres",
-  password: "root",
-  database: "supercharged",
+  port: Number(process.env.POSTGRES_PORT),
+  host: process.env.POSTGRES_HOST,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DATABASE,
   type: "postgres",
   synchronize: false,
   logging: true,

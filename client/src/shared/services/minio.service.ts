@@ -2,7 +2,7 @@ export class MinioBucketService {
   static async uploadToBucket(
     file: File,
     url: string,
-    onProgress: (event: number) => void
+    onProgress: (event: number) => void,
     // onError: () => void
   ) {
     const xhr = new XMLHttpRequest();
