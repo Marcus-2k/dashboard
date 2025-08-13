@@ -1,8 +1,8 @@
-// {
-//   "extends": "../../tsconfig.json",
-//   "compilerOptions": {
-//     "outDir": "../../dist/apps/post-signup-service"
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
-// }
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/post-signup-service"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+}

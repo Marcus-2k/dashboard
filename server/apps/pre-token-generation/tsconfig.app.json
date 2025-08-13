@@ -1,8 +1,8 @@
-// {
-//   "extends": "../../tsconfig.json",
-//   "compilerOptions": {
-//     "outDir": "../../dist/apps/pre-token-generation"
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
-// }
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/pre-token-generation"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+}
