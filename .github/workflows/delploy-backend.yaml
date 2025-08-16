@@ -43,8 +43,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          cd server-nest-v2
-          docker buildx build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
+          cd server
+          docker buildx build -f ./server/apps/api/Dockerfile.yaml -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
 
       - name: Deploy to ECS
         run: |
