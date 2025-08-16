@@ -68,3 +68,33 @@ variable "desired_count" {
   type        = number
   default     = 1
 }
+
+variable "db_name" {
+  description = "Initial PostgreSQL database name"
+  type        = string
+  default     = "marketplace"
+}
+
+variable "db_username" {
+  description = "Master username"
+  type        = string
+  default     = "postgres"
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "db_allocated_storage" {
+  description = "Storage in GB"
+  type        = number
+  default     = 20
+}
+
+variable "db_engine_version" {
+  description = "PostgreSQL engine version"
+  type        = string
+  default     = "16.10"
+}

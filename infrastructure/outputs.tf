@@ -25,3 +25,8 @@ output "task_def_family" {
 output "ecr_repository_url" {
   value = aws_ecr_repository.app.repository_url
 }
+
+output "db_endpoint" {
+  description = "PostgreSQL endpoint hostname"
+  value       = aws_db_instance.postgres.address
+}
