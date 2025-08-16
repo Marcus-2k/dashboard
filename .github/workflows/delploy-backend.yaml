@@ -20,6 +20,7 @@ env:
 
 jobs:
   deploy:
+    environment: ${{ inputs.env || 'dev' }}
     runs-on: ubuntu-latest
 
     steps:
