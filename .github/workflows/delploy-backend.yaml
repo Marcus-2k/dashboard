@@ -1,4 +1,4 @@
-name: Build and Deploy BackendApp to ECS
+name: Build and Deploy Backend to ECS
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           cd server
-          docker buildx build -f ./server/apps/api/Dockerfile.yaml -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
+          docker buildx build -f ./apps/api/Dockerfile.yaml -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
 
       - name: Deploy to ECS
         run: |
