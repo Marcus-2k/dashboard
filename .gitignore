@@ -24,3 +24,6 @@ yarn-error.log*
 # infrastructure
 /infrastructure/.terraform
 /infrastructure/.terraform.lock.hcl
+/infrastructure/terraform.tfvars
+/infrastructure/terraform.tfstate
+/infrastructure/terraform.tfstate.backup
