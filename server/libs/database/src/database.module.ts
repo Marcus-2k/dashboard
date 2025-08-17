@@ -14,7 +14,7 @@ import { TypeOrmEntities, entitiesForFeature } from "./typeorm.entities.module";
       useFactory: async (
         configService: ConfigService,
       ): Promise<TypeOrmModuleOptions> => {
-        const pathToMigrations = join(__dirname, "../../migrations/*.js");
+        const pathToMigrations = join(__dirname, "./migrations/*.js");
 
         const config: TypeOrmModuleOptions = {
           type: "postgres",
@@ -33,7 +33,10 @@ import { TypeOrmEntities, entitiesForFeature } from "./typeorm.entities.module";
           cache: {
             duration: 60_000,
           },
-          ssl: false,
+          ssl:
+            process.env.NODE_ENV === "production"
+              ? { rejectUnauthorized: false }
+              : false,
         };
 
         return config;
