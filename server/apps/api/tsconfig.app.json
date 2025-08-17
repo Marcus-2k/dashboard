@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/apps/api",
-    "baseUrl": "./",
+    "outDir": "../../dist",
+    "baseUrl": ".",
     "paths": {
       "@dto/*": ["src/dto/*"],
       "@shared/*": ["src/shared/*"],
