@@ -29,6 +29,19 @@ interface FormProduct {
   images: string[];
 }
 
+interface UploadProgress {
+  [key: string]: UploadProgressItem;
+}
+
+interface UploadProgressItem {
+  status: UploadStatusEnum;
+  file: File | null;
+  progress: number;
+  url: string;
+  s3PresignedUrl: string | null;
+  isUpdateMode: boolean;
+}
+
 const minioApi = new MinioApi();
 const productApi = new ProductApi();
 
@@ -64,15 +77,7 @@ export function UpsertProduct() {
     },
     mode: "onChange",
   });
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: {
-      status: UploadStatusEnum;
-      file: File;
-      progress: number;
-      url: string;
-      s3Url: string;
-    };
-  }>({});
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress>({});
 
   useEffect(() => {
     if (isInit) {
@@ -99,6 +104,29 @@ export function UpsertProduct() {
       setValue("price", response.price);
       setValue("discountPrice", response.discountPrice);
       setValue("images", response.images);
+
+      const result: UploadProgressItem[] = response.images.map((image) => {
+        return {
+          file: null,
+          progress: 100,
+          url: image,
+          s3PresignedUrl: null,
+          isUpdateMode: true,
+          status: UploadStatusEnum.SUCCESS,
+        };
+      });
+
+      const uploadProgressObject = result.reduce<UploadProgress>(
+        (acc, item, index) => {
+          acc[index.toString()] = item;
+          return acc;
+        },
+        {}
+      );
+
+      console.log(uploadProgressObject);
+
+      setUploadProgress(uploadProgressObject);
     }
 
     setIsFormInit(true);
@@ -170,7 +198,8 @@ export function UpsertProduct() {
             file: file,
             progress: 0,
             url: data.previewUrl,
-            s3Url: data.presignedUrl,
+            s3PresignedUrl: data.presignedUrl,
+            isUpdateMode: false,
           },
         };
       });
@@ -260,36 +289,38 @@ export function UpsertProduct() {
           </div>
 
           {/* Upload Progress */}
-          {Object.keys(uploadProgress).length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {Object.entries(uploadProgress).map(([key, progress]) => (
-                <div
-                  key={key}
-                  className="w-[calc(50%-4px)] h-[120px] rounded relative"
-                >
-                  {progress.progress === 100 ? (
-                    <>
-                      <img
-                        src={progress.url}
-                        alt={progress.file.name}
-                        className="object-cover size-full"
-                      />
+          <div className="overflow-x-auto mt-4 w-full flex gap-2 light-green-scroll overflow-y-hidden">
+            {Object.keys(uploadProgress).length > 0 && (
+              <>
+                {Object.entries(uploadProgress).map(([key, progress]) => (
+                  <div
+                    key={key}
+                    className="min-w-60 max-w-60 h-80 rounded relative"
+                  >
+                    {progress.progress === 100 ? (
+                      <>
+                        <img
+                          src={progress.url}
+                          className="object-cover size-full"
+                        />
 
-                      <IconButton
-                        style={{ position: "absolute", top: 0, right: 0 }}
-                        aria-label="delete"
-                        onClick={() => removeImage(key, progress.url)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </>
-                  ) : (
-                    <ProgressCard progress={progress.progress} />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+                        <IconButton
+                          color="error"
+                          style={{ position: "absolute", top: 0, right: 0 }}
+                          aria-label="delete"
+                          onClick={() => removeImage(key, progress.url)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <ProgressCard progress={progress.progress} />
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Basic Information */}

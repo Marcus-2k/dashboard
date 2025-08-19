@@ -10,8 +10,6 @@ import { useSearchParams } from "react-router-dom";
 const productApi = new ProductApi();
 
 export const Products = () => {
-  console.log("producs");
-
   const [products, setProducts] = useState<ProductResponse[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);

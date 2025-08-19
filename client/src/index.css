@@ -3,3 +3,24 @@
 .lg-bg {
   background: linear-gradient(to right, #c9d6ff, #e2e2e2);
 }
+
+.light-green-scroll {
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background: #2d8bb6;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #979797;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #2d8bb6;
+    border-radius: 10px;
+
+    &:hover {
+      background: #2d8bb6;
+    }
+  }
+}

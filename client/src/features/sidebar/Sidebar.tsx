@@ -13,7 +13,7 @@ export function Sidebar({ children }: SidebarProps) {
 
   return (
     <div className="flex">
-      <div className="relative w-[220px] lg-bg p-4 h-screen">
+      <div className="relative w-[220px] lg-bg p-4 h-inherit">
         {/* Current URL Display */}
         <div className="mb-4 p-2 bg-white rounded border">
           <p className="text-xs text-gray-500">Current URL:</p>
@@ -53,7 +53,7 @@ export function Sidebar({ children }: SidebarProps) {
         </ul>
       </div>
 
-      <div className="w-[calc(100%-220px)]">{children}</div>
+      <div className="w-[calc(100%-220px)] min-h-screen">{children}</div>
     </div>
   );
 }
