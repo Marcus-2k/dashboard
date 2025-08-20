@@ -19,10 +19,21 @@ resource "aws_ecs_task_definition" "app" {
         protocol      = "tcp"
       }]
 
-      # Example envs (optional)
       environment = [
-        { name = "NODE_ENV", value = "production" }
+        { name = "ENV", value = var.app_env },
+        { name = "NODE_ENV", value = var.app_env },
+        { name = "PORT", value = tostring(var.service_port) },
+        { name = "NO_COLOR", value = "true" },
+        { name = "LOG_LEVEL", value = "info" }
       ]
+
+      secrets = [
+        { name = "POSTGRES_HOST", valueFrom = "${aws_secretsmanager_secret.app_env.arn}:POSTGRES_HOST::" },
+        { name = "POSTGRES_PORT", valueFrom = "${aws_secretsmanager_secret.app_env.arn}:POSTGRES_PORT::" },
+        { name = "POSTGRES_USER", valueFrom = "${aws_secretsmanager_secret.app_env.arn}:POSTGRES_USER::" },
+        { name = "POSTGRES_PASSWORD", valueFrom = "${aws_secretsmanager_secret.app_env.arn}:POSTGRES_PASSWORD::" },
+        { name = "POSTGRES_DATABASE", valueFrom = "${aws_secretsmanager_secret.app_env.arn}:POSTGRES_DATABASE::" },
+      ],
 
       logConfiguration = {
         logDriver = "awslogs"

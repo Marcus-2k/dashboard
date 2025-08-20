@@ -19,7 +19,6 @@ variable "aws_account_id" {
 variable "project_name" {
   description = "Name prefix for tagging resources"
   type        = string
-  default     = "store-dev"
 }
 
 variable "vpc_cidr" {
@@ -48,7 +47,7 @@ variable "container_image" {
 variable "container_port" {
   description = "Port your Nest app listens on inside the container"
   type        = number
-  default     = 3000
+  default     = 80
 }
 
 variable "task_cpu" {
@@ -97,4 +96,9 @@ variable "db_engine_version" {
   description = "PostgreSQL engine version"
   type        = string
   default     = "16.10"
+}
+
+variable "app_env" {
+  description = "Application environment name"
+  type        = string
 }

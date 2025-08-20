@@ -34,7 +34,7 @@ import { TypeOrmEntities, entitiesForFeature } from "./typeorm.entities.module";
             duration: 60_000,
           },
           ssl:
-            process.env.NODE_ENV === "production"
+            process.env.NODE_ENV === "prod" || process.env.NODE_ENV === "dev"
               ? { rejectUnauthorized: false }
               : false,
         };

@@ -11,7 +11,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier        = "${var.project_name}-pg"
+  identifier        = "${var.project_name}-${var.app_env}"
   engine            = "postgres"
   engine_version    = var.db_engine_version
   instance_class    = var.db_instance_class
