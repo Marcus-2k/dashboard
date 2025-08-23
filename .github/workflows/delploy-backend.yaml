@@ -19,7 +19,8 @@ env:
   ECR_BACKEND_IMAGE: ${{ vars.ECR_BACKEND_IMAGE }}
 
 jobs:
-  deploy:
+  deploy-backend:
+    name: Deploy Backend
     environment: ${{ inputs.env || 'dev' }}
     runs-on: ubuntu-latest
 

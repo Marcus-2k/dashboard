@@ -15,9 +15,8 @@ on:
 jobs:
   deploy-client:
     name: Deploy Client
+    environment: ${{ inputs.env || 'dev' }}
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref_name }}
 
     steps:
       - name: Checkout Code
@@ -29,7 +28,7 @@ jobs:
           node-version: "20"
 
       - name: Install Dependencies
-        run: npm install --force
+        run: cd client && npm install --force
 
       - name: Build Client
         run: npm run build
