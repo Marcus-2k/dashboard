@@ -22,8 +22,8 @@ yarn-error.log*
 /minio_storage
 
 # infrastructure
-/infrastructure/.terraform
-/infrastructure/.terraform.lock.hcl
-/infrastructure/terraform.tfvars
-/infrastructure/terraform.tfstate
-/infrastructure/terraform.tfstate.backup
+/infrastructure/**/.terraform
+/infrastructure/**/.terraform.lock.hcl
+/infrastructure/**/terraform.tfvars
+/infrastructure/**/terraform.tfstate
+/infrastructure/**/terraform.tfstate.backup

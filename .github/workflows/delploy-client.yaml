@@ -27,8 +27,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Change Directory
+        run: cd client
+
       - name: Install Dependencies
-        run: cd client && npm install --force
+        run: npm install --force
 
       - name: Build Client
         run: npm run build
