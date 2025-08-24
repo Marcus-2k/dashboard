@@ -19,7 +19,7 @@ import {
   GetPresignedUrlResponseToJSON,
 } from "../models/index";
 
-export interface MinioControllerGetPresignedUrlRequest {
+export interface GetPresignedUrlRequest {
   bucket: string;
   key: string;
 }
@@ -32,22 +32,25 @@ export interface MinioControllerGetPresignedUrlRequest {
  */
 export interface MinioApiInterface {
   /**
-   *
+   * Get a presigned url
+   * @summary
    * @param {string} bucket
    * @param {string} key
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof MinioApiInterface
    */
-  minioControllerGetPresignedUrlRaw(
-    requestParameters: MinioControllerGetPresignedUrlRequest,
+  getPresignedUrlRaw(
+    requestParameters: GetPresignedUrlRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetPresignedUrlResponse>>;
 
   /**
+   * Get a presigned url
+   *
    */
-  minioControllerGetPresignedUrl(
-    requestParameters: MinioControllerGetPresignedUrlRequest,
+  getPresignedUrl(
+    requestParameters: GetPresignedUrlRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetPresignedUrlResponse>;
 }
@@ -57,22 +60,24 @@ export interface MinioApiInterface {
  */
 export class MinioApi extends runtime.BaseAPI implements MinioApiInterface {
   /**
+   * Get a presigned url
+   *
    */
-  async minioControllerGetPresignedUrlRaw(
-    requestParameters: MinioControllerGetPresignedUrlRequest,
+  async getPresignedUrlRaw(
+    requestParameters: GetPresignedUrlRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetPresignedUrlResponse>> {
     if (requestParameters["bucket"] == null) {
       throw new runtime.RequiredError(
         "bucket",
-        'Required parameter "bucket" was null or undefined when calling minioControllerGetPresignedUrl().',
+        'Required parameter "bucket" was null or undefined when calling getPresignedUrl().',
       );
     }
 
     if (requestParameters["key"] == null) {
       throw new runtime.RequiredError(
         "key",
-        'Required parameter "key" was null or undefined when calling minioControllerGetPresignedUrl().',
+        'Required parameter "key" was null or undefined when calling getPresignedUrl().',
       );
     }
 
@@ -106,12 +111,14 @@ export class MinioApi extends runtime.BaseAPI implements MinioApiInterface {
   }
 
   /**
+   * Get a presigned url
+   *
    */
-  async minioControllerGetPresignedUrl(
-    requestParameters: MinioControllerGetPresignedUrlRequest,
+  async getPresignedUrl(
+    requestParameters: GetPresignedUrlRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetPresignedUrlResponse> {
-    const response = await this.minioControllerGetPresignedUrlRaw(
+    const response = await this.getPresignedUrlRaw(
       requestParameters,
       initOverrides,
     );

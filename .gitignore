@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# API
+# build
 **/dist
 
 # dependencies
@@ -18,8 +18,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# MinIO
-/minio_storage
+# minio
+/minio-storage
 
 # infrastructure
 /infrastructure/**/.terraform

@@ -185,7 +185,7 @@ export function UpsertProduct() {
 
   async function eventProcessFile(file: File): Promise<void> {
     try {
-      const data = await minioApi.minioControllerGetPresignedUrl({
+      const data = await minioApi.getPresignedUrl({
         bucket: S3_BUCKET_NAME,
         key: file.name,
       });

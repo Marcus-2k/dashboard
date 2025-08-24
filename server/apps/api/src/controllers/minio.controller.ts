@@ -1,6 +1,6 @@
 import { GetPresignedUrlRequest, GetPresignedUrlResponse } from "@dto/minio";
 import { Controller, Get, Query } from "@nestjs/common";
-import { ApiOkResponse } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { GetPresignedUrlUseCase } from "@use-cases/minio";
 
 @Controller("minio")
@@ -10,6 +10,10 @@ export default class MinioController {
   ) {}
 
   @Get("get-presigned-url")
+  @ApiOperation({
+    operationId: "getPresignedUrl",
+    description: "Get a presigned url",
+  })
   @ApiOkResponse({ type: GetPresignedUrlResponse })
   async getPresignedUrl(
     @Query() query: GetPresignedUrlRequest,

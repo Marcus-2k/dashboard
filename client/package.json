@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "prettify": "prettier --write \"src/**/*.{ts,scss,html}\"",
-    "generate-api:local": "npx @openapitools/openapi-generator-cli generate -i http://localhost:3000/docs-json -g typescript-fetch -o ./src/shared/api --additional-properties=supportsES6=true,withInterfaces=true,basePath=http://localhost:3000 --skip-validate-spec && npm run prettify"
+    "generate-api:local": "npx @openapitools/openapi-generator-cli generate -i http://localhost/docs-json -g typescript-fetch -o ./src/shared/api --additional-properties=supportsES6=true,withInterfaces=true --skip-validate-spec && npm run prettify"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -37,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "openapi-typescript": "^7.9.1",
     "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
